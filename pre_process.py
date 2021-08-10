@@ -16,7 +16,7 @@ p_label, v_label = np.array(p_label), np.array(v_label)
 print("* load label info " , p_label.shape, v_label.shape)
 
 x_data, y_data = [], []
-for patientID in patientIDs:
+for patientID in patientIDs[400:]:
     for r in [None, 0]:
         for f in [None, 0, 1]:
             dcm_list = get_dcm_files(TRAIN_DIR, patientID, img_type)
