@@ -6,7 +6,7 @@ TRAIN_DIR='%s/train'%DATA_PATH
 TEST_DIR='%s/test'%DATA_PATH
 TRAIN_LABELS='%s/train_labels.csv'%DATA_PATH
 
-mode='test'
+mode='train'
 
 if mode=='train':
     DIR=TRAIN_DIR
@@ -30,7 +30,7 @@ if mode=='train':
     print("* load label info " , p_label.shape, v_label.shape)
 
 x_data, y_data = [], []
-for patientID in patientIDs:
+for patientID in patientIDs[:300]:
     for r in [None, 0]:
         for f in [None, 0, 1]:
             dcm_list = get_dcm_files(DIR, patientID, img_type)
@@ -48,8 +48,8 @@ y_data = np.array(y_data)
 print(x_data.shape, y_data.shape)
 
 if mode=='train':
-    np.save("x_data.npy", x_data)
-    np.save("y_data.npy", y_data)
+    np.save("x_data_300.npy", x_data)
+    np.save("y_data_300.npy", y_data)
 else: 
     np.save("x_test.npy", x_data)
 
