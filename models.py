@@ -11,7 +11,7 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 
 
 class MultiHeadSelfAttention(tf.keras.layers.Layer):
-    def __init__(self, embed_dim, num_heads=8):
+    def __init__(self, embed_dim, num_heads, **kwargs):
         super(MultiHeadSelfAttention, self).__init__()
         self.embed_dim = embed_dim
         self.num_heads = num_heads
@@ -56,6 +56,13 @@ class MultiHeadSelfAttention(tf.keras.layers.Layer):
         output = self.combine_heads(concat_attention)
         return output
 
+    def get_config(self):
+        base_config = super().get_config()
+        return {**base_config, 
+                "embed_dim":self.embed_dim,
+                "num_heads":self.num_heads} 
+
+
 def embedding_block(x):
     y = layers.Reshape([64,32*32, 128], )(x)
     y = layers.LayerNormalization(epsilon=1e-6, name="Emb_norm")(y)
@@ -67,7 +74,7 @@ def embedding_block(x):
 
 def mh_encoder_block(x, i=0):
     y = layers.LayerNormalization(epsilon=1e-6, name="MH%i_norm"%i)(x)
-    y = layers.Concatenate(name="MH%i_concat"%i)([MultiHeadSelfAttention(64)(y) for _ in range(8)])
+    y = layers.Concatenate(name="MH%i_concat"%i)([MultiHeadSelfAttention(64, 8)(y) for _ in range(8)])
     z = layers.Add(name="MH%i_add"%i)([y, x])
 
     y = layers.LayerNormalization(epsilon=1e-6, name="MLP%i_norm"%i)(z)
